@@ -3,14 +3,15 @@
 
 #define MAXPESSOAS 8
 
-typedef struct pessoa{
-	int id;
+typedef struct pessoa {
+	int qntd;
 	struct pessoa* prox;
 } pessoa;
 
 pessoa lista[MAXPESSOAS+1];
 
-void Imprimir(pessoa *lista);
+void ImprimeTudo(pessoa *lista);
+void ImprimePessoa(pessoa *lista, int id);
 void Inserir_Aresta(pessoa *lista, int a, int b); 
 
 int main(int argc, char *argv[]){
@@ -25,7 +26,7 @@ int main(int argc, char *argv[]){
   
   // Inicialização da lista. 
   for (i = 1; i <= MAXPESSOAS; i++){
-    lista[i].id = 0;
+    lista[i].qntd = 0;
     lista[i].prox = NULL;
   }
         
@@ -37,22 +38,39 @@ int main(int argc, char *argv[]){
     fscanf(arquivo,"%d %d", &a, &b);
   }
 
-  Imprimir (lista);
+  ImprimeTudo (lista);
+  
+  ImprimePessoa(lista, 2);
+  ImprimePessoa(lista, 3);
 }
 
 
-void Imprimir(pessoa *lista){
-  int i;
-  pessoa *tmp;
-  for (i = 1; i <= MAXPESSOAS; i++) {
-    tmp = lista[i].prox;
-    printf("%2d: (%d) ==> ", i, lista[i].id);
-    while (tmp != NULL) {
-      printf("%d  ", tmp->id);
-      tmp = tmp->prox;
-    }
-    printf("\n");
-  }
+void ImprimeTudo(pessoa *lista) {
+	int i;
+	pessoa *tmp;
+	
+	for (i = 1; i <= MAXPESSOAS; i++) {
+		tmp = lista[i].prox;
+		printf("%2d: (%d) ==> ", i, lista[i].qntd);
+		while (tmp != NULL) {
+			printf("%d  ", tmp->qntd);
+			tmp = tmp->prox;
+		}
+		printf("\n");
+	}
+}
+
+void ImprimePessoa(pessoa *lista, int id) {
+	int i;
+	pessoa *tmp;
+	
+	tmp = lista[id].prox;
+	printf("%2d: (%d) ==> ", id, lista[id].qntd);
+	while (tmp != NULL) {
+		printf("%d  ", tmp->qntd);
+		tmp = tmp->prox;
+	}
+	printf("\n");
 }
 
 void Inserir_Aresta (pessoa *lista, int a, int b) {
@@ -60,15 +78,15 @@ void Inserir_Aresta (pessoa *lista, int a, int b) {
   pessoa *tmp;
  
   aux = (pessoa*) malloc((int)sizeof(pessoa));    //retorno de um ponteiro genérico.
-  aux->id = b;
+  aux->qntd = b;
   aux->prox = NULL;
   
-  lista[a].id++;
+  lista[a].qntd++;
   if (lista[a].prox == NULL) // Caso a lista estiver vazia - Insere.	
     lista[a].prox = aux;
   else	{
     tmp = lista[a].prox;
-    if (tmp->id > b) { //insere como primeiro da lista
+    if (tmp->qntd > b) { //insere como primeiro da lista
       aux->prox = tmp;
       lista[a].prox = aux;
     } 		          //insere os vértices ordenados
@@ -77,13 +95,11 @@ void Inserir_Aresta (pessoa *lista, int a, int b) {
       tmp->prox = aux;  
     }
     else {
-      while ((tmp->prox != NULL) &&(tmp->prox->id < b))
+      while ((tmp->prox != NULL) &&(tmp->prox->qntd < b))
 	tmp = tmp->prox;
       aux->prox = tmp->prox;
       tmp->prox = aux;  
     }
   }
   
-  free(aux);
-  free(tmp);
 }
